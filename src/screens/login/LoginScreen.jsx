@@ -3,8 +3,22 @@ import { useNavigation } from "@react-navigation/native";
 import { FormBuilder } from "react-native-paper-form-builder";
 import { useForm } from "react-hook-form";
 import { Button, Avatar } from "react-native-paper";
+import { useEffect, useRef, useState } from "react";
+import { io, Manager } from "socket.io-client";
+import { useSocket } from "../../hooks/useSocket";
+import { connectToServer } from "../../socket";
+// import socket from "../../socket";
 
 export const LoginScreen = () => {
+  // // const socket = useRef();
+  // const [socket] = useState(conectar());
+  // const [online, setOnline] = useState(false);
+
+  // // const socket = io("http://localhost:3000/socket.io/socket.io.js", {
+  // //   transports: ["websocket"],
+  // //   autoConnect: true,
+  // // });
+
   const navigation = useNavigation();
   const { control, setFocus, handleSubmit } = useForm({
     defaultValues: {
@@ -14,9 +28,15 @@ export const LoginScreen = () => {
     mode: "onChange",
   });
 
-  const login = () => {
-    navigation.navigate("Principal");
+  const login = async () => {
+    // socket.emit("events", { name: "nestjs" });
+    // socket.emit('con');
+    // const res = await socket.emit("/", { name: "nestjs" });
+    // console.log(res);
+    // navigation.navigate("Principal");
   };
+
+  useEffect(() => {}, []);
   return (
     <View style={styles.containerStyle}>
       <ScrollView contentContainerStyle={styles.scrollViewStyle}>

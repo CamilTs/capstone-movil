@@ -9,6 +9,7 @@ import { Camara } from "./src/components";
 import { AppProvider } from "./src/context/AppContext";
 import { FormularioIngresar } from "./src/screens/ingresar/components/FormularioIngresar";
 import { LoginScreen } from "./src/screens";
+import { SocketProvider } from "./src/context/SocketContext";
 const Stack = createStackNavigator();
 export default function App() {
   return (
@@ -17,12 +18,14 @@ export default function App() {
         <StatusBar style="dark" />
         <SafeAreaProvider>
           <AppProvider>
-            <Stack.Navigator initialRouteName="Login">
-              <Stack.Screen name="Principal" component={PrincipalScreen} options={{ headerShown: true }} />
-              <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: true }} />
-              <Stack.Screen name="Camara" component={Camara} options={{ headerShown: true }} />
-              <Stack.Screen name="FormularioIngresar" component={FormularioIngresar} options={{ headerShown: true }} />
-            </Stack.Navigator>
+            <SocketProvider>
+              <Stack.Navigator initialRouteName="Login">
+                <Stack.Screen name="Principal" component={PrincipalScreen} options={{ headerShown: true }} />
+                <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: true }} />
+                <Stack.Screen name="Camara" component={Camara} options={{ headerShown: true }} />
+                <Stack.Screen name="FormularioIngresar" component={FormularioIngresar} options={{ headerShown: true }} />
+              </Stack.Navigator>
+            </SocketProvider>
           </AppProvider>
         </SafeAreaProvider>
       </NavigationContainer>
