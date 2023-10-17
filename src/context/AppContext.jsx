@@ -42,7 +42,6 @@ export const AppProvider = ({ children }) => {
 
   const agregarVendidos = (codigoBarra) => {
     const productoEncontrado = productos.find((producto) => producto.codigoBarra === codigoBarra);
-    console.log(productoEncontrado);
     setLstVendidos([...lstVendidos, codigoBarra]);
   };
 

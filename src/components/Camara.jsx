@@ -4,10 +4,11 @@ import { Button, Text, Dialog } from "react-native-paper";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { useNavigation } from "@react-navigation/native";
 import { useAppContext } from "../context/AppContext";
+import { useSocketContext } from "../context/SocketContext";
 
 export const Camara = ({ route }) => {
   const { tipo } = route.params;
-
+  const { socket } = useSocketContext();
   const [codigoBarra, setCodigoBarra] = useState("");
   const [hasPermission, setHasPermission] = useState(null);
   const [visible, setVisible] = useState(false);
@@ -20,10 +21,11 @@ export const Camara = ({ route }) => {
     setCodigoBarra(data);
     setScanned(true);
     if (tipo === "vender") {
+      // AQUI SE USA EL SOCKET PARA ENVIAR EL CODIGO DE BARRA
+      socket.emit("venderProducto", { codigoBarra: data });
       agregarVendidos(codigoBarra);
     } else {
       if (!validarProducto(data)) {
-        console.log("NO EN LA DB");
         setIsVisibleIngresar(true);
         return;
       } else {

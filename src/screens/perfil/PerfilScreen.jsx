@@ -1,9 +1,17 @@
-import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import { StyleSheet, Text, View, Image } from "react-native";
 import { Avatar, Button, TextInput } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { checkAuthToken, cerrarSesion as logout } from "../../store/auth";
+import { ActivityIndicator, MD2Colors } from "react-native-paper";
+import { Api, api } from "../../api/api";
 
 export const PerfilScreen = () => {
+  const { rut, nombre, apellido, correo, rol, direccion, telefono, imagen, id } = useSelector((state) => state.auth);
+  const [img, setImg] = useState("");
+  const dispatch = useDispatch();
+  const { get, loading } = Api();
   const navigation = useNavigation();
   const [usuario, setUsuario] = useState({
     nombre: "Juan",
@@ -13,36 +21,47 @@ export const PerfilScreen = () => {
     direccion: "Av. Pedro de valdivia 400 42, Providencia",
     fotoPerfil: "https://www.mundodeportivo.com/alfabeta/hero/2023/06/avatar-1.webp",
   });
-
   const cerrarSesion = () => {
-    navigation.navigate("Login");
+    dispatch(logout());
   };
+
+  const buscarImg = async () => {
+    console.log(id);
+    const res = await get(`usuario/img/${id}`);
+    const { data } = res;
+    setImg(data.imagen);
+    console.log(img);
+  };
+  useEffect(() => {
+    buscarImg();
+  }, [id]);
+
   return (
     <View style={styles.contenedor.contenedor}>
       <View style={styles.contenedor.informacion}>
         <View style={styles.contenedor.fotoPeril}>
-          <Avatar.Image size={200} source={{ uri: usuario.fotoPerfil }} />
+          {img ? <Avatar.Image size={200} source={{ uri: img }} /> : <ActivityIndicator animating={true} color={MD2Colors.red800} />}
         </View>
         <View style={styles.contenedor.datos}>
           <View style={styles.contenedor.campo}>
             <Text style={styles.texto.label}>Nombre:</Text>
-            <Text style={styles.texto.campo}>{usuario.nombre}</Text>
+            <Text style={styles.texto.campo}>{nombre}</Text>
           </View>
           <View style={styles.contenedor.campo}>
             <Text style={styles.texto.label}>Apellido:</Text>
-            <Text style={styles.texto.campo}>{usuario.apellido}</Text>
+            <Text style={styles.texto.campo}>{apellido}</Text>
           </View>
           <View style={styles.contenedor.campo}>
             <Text style={styles.texto.label}>Email:</Text>
-            <Text style={styles.texto.campo}>{usuario.email}</Text>
+            <Text style={styles.texto.campo}>{correo}</Text>
           </View>
           <View style={styles.contenedor.campo}>
             <Text style={styles.texto.label}>Telefono:</Text>
-            <Text style={styles.texto.campo}>{usuario.telefono}</Text>
+            <Text style={styles.texto.campo}>{telefono}</Text>
           </View>
           <View style={styles.contenedor.campo}>
             <Text style={styles.texto.label}>Direccion:</Text>
-            <Text style={styles.texto.campo}>{usuario.direccion}</Text>
+            <Text style={styles.texto.campo}>{direccion}</Text>
           </View>
         </View>
       </View>

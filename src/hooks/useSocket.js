@@ -12,6 +12,16 @@ export const useSocket = (serverPath) => {
 
   const socket = manager.socket("/");
   const [online, setOnline] = useState(false);
+  useEffect(() => {
+    setOnline(socket.connected);
+  }, [socket]);
 
+  useEffect(() => {
+    socket.on("connect", () => setOnline(true));
+  }, [socket]);
+
+  useEffect(() => {
+    socket.on("disconnect", () => setOnline(false));
+  }, [socket]);
   return { socket, online };
 };

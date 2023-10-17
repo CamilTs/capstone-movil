@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "capstone-app-movil",
-    "slug": "capstone-app-movil",
+    "slug": "capstone",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -25,6 +25,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a41ae107-c930-4da5-a0ee-d3cfda66cd19"
+      }
+    },
+    "owner": "camilots"
   }
 }

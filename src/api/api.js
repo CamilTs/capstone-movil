@@ -1,9 +1,9 @@
 import axios from "axios";
 import { useState } from "react";
 
-const url = "http://localhost:3000";
+const url = "http://192.168.2.111:3000";
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: url,
 });
 
