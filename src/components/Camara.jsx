@@ -5,8 +5,12 @@ import { BarCodeScanner } from "expo-barcode-scanner";
 import { useNavigation } from "@react-navigation/native";
 import { useAppContext } from "../context/AppContext";
 import { useSocketContext } from "../context/SocketContext";
+import { Api } from "../api/api";
+import { useSelector } from "react-redux";
 
 export const Camara = ({ route }) => {
+  const { get } = Api();
+  const { comercio, id } = useSelector((state) => state.auth);
   const { tipo } = route.params;
   const { socket } = useSocketContext();
   const [codigoBarra, setCodigoBarra] = useState("");
@@ -17,15 +21,21 @@ export const Camara = ({ route }) => {
   const { agregarVendidos, agregarAgregados, validarProducto } = useAppContext();
   const navigation = useNavigation();
 
+  const verificarProducto = async (codigoBarra) => {
+    const res = await get(`producto/${codigoBarra}/${comercio}`);
+    console.log(res);
+  };
+
   const manejarCodigoBarra = ({ type, data }) => {
     setCodigoBarra(data);
     setScanned(true);
+    const isVerificado = verificarProducto(data);
     if (tipo === "vender") {
       // AQUI SE USA EL SOCKET PARA ENVIAR EL CODIGO DE BARRA
-      socket.emit("venderProducto", { codigoBarra: data });
+      socket.emit("venderProducto", { codigoBarra: data, comercio_id: comercio, usuario_id: id });
       agregarVendidos(codigoBarra);
     } else {
-      if (!validarProducto(data)) {
+      if (!isVerificado) {
         setIsVisibleIngresar(true);
         return;
       } else {

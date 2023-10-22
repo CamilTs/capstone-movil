@@ -12,6 +12,7 @@ export const authSlice = createSlice({
     rol: null,
     direccion: null,
     telefono: null,
+    comercio: null,
     token: null,
     errorMessage: null,
   },
@@ -26,6 +27,7 @@ export const authSlice = createSlice({
       state.rol = payload.rol;
       state.direccion = payload.direccion;
       state.telefono = payload.telefono;
+      state.comercio = payload.comercio;
       state.token = payload.token;
       state.errorMessage = null;
     },
@@ -39,6 +41,7 @@ export const authSlice = createSlice({
       state.rol = null;
       state.direccion = null;
       state.telefono = null;
+      state.comercio = null;
       state.token = null;
       state.errorMessage = payload.errorMessage;
     },

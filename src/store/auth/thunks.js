@@ -44,7 +44,11 @@ export const checkAuthToken = (token) => {
       const decoded = jwt_decode(token);
       const { exp } = decoded;
       const currentTime = Math.floor(Date.now() / 1000);
-      if (exp <= currentTime) return dispatch(logout({ errorMessage: null }));
+      if (exp <= currentTime) {
+        await AsyncStorage.removeItem("token");
+
+        return dispatch(logout({ errorMessage: null }));
+      }
 
       if (!token) return dispatch(logout({ errorMessage: null }));
 

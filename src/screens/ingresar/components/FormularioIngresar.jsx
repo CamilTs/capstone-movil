@@ -4,22 +4,30 @@ import { Button, TextInput } from "react-native-paper";
 import { FormBuilder } from "react-native-paper-form-builder";
 import { useForm } from "react-hook-form";
 import { productos } from "../../../productos";
+import { Api } from "../../../api/api";
+import { useSelector } from "react-redux";
 
 export const FormularioIngresar = ({ route }) => {
+  const { comercio } = useSelector((state) => state.auth);
   const { codigoBarra } = route.params;
+  const { post } = Api();
   const navigator = useNavigation();
-  const { control, setFocus, handleSubmit } = useForm({
+  const { control, setFocus, handleSubmit, getValues } = useForm({
     defaultValues: {
-      codigoBarra: codigoBarra,
+      codigo_barra: codigoBarra,
       nombre: "",
       precio: "",
     },
     mode: "onChange",
   });
 
-  const ingresarProducto = (producto) => {
-    productos.push(producto);
-    navigator.goBack();
+  const ingresarProducto = async (producto) => {
+    // productos.push(producto);
+    const res = await post("producto", { ...producto, comercio });
+    console.log(res);
+    if (res.success) {
+      navigator.goBack();
+    }
   };
   return (
     <View style={styles.containerStyle}>
@@ -29,7 +37,7 @@ export const FormularioIngresar = ({ route }) => {
           control={control}
           setFocus={setFocus}
           formConfigArray={[
-            { type: "text", name: "codigoBarra", rules: { disabled: false, required: true }, textInputProps: { label: "Codigo de barras" } },
+            { type: "text", name: "codigo_barra", rules: { disabled: false, required: true }, textInputProps: { label: "Codigo de barras" } },
             { type: "text", name: "nombre", rules: { required: "Nombre requerido" }, textInputProps: { label: "Nombre" } },
             { type: "text", name: "precio", rules: { required: "Precio requerido" }, textInputProps: { label: "Precio", inputMode: "numeric" } },
           ]}

@@ -10,42 +10,40 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { checkAuthToken } from "../store/auth";
 import { useJwt } from "react-jwt";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { FormularioIngresar } from "../screens/ingresar/components/FormularioIngresar";
 const TabMenu = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 const Tabs = () => {
   return (
-    <TabMenu.Navigator>
+    <TabMenu.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName = focused ? "ios-information-circle" : "ios-information-circle-outline";
+          if (route.name == "Perfil") {
+            iconName = focused ? "ios-person-circle" : "ios-person-circle-outline";
+          } else if (route.name == "Ingresar") {
+            iconName = focused ? "ios-add-circle" : "ios-add-circle-outline";
+          } else if (route.name == "Vender") {
+            iconName = focused ? "ios-cash" : "ios-cash-outline";
+          }
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: "purple",
+        tabBarInactiveTintColor: "gray",
+      })}
+    >
       <TabMenu.Screen name="Perfil" component={PerfilScreen} options={{ headerShown: false }} />
       <TabMenu.Screen name="Ingresar" component={IngresarScreen} options={{ headerShown: false }} />
+      <TabMenu.Screen name="Vender" component={VenderScreen} options={{ headerShown: false }} />
     </TabMenu.Navigator>
   );
 };
 export const Tab = () => {
   const { status } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-  // const Tab = createBottomTabNavigator();
-  // const [index, setIndex] = useState(0);
-  // const [routes, setRoutes] = useState([
-  //   { key: "perfil", title: "Perfil", icon: "account" },
-  //   { key: "ingresar", title: "Ingresar", icon: "plus" },
-  //   { key: "vender", title: "Vender", icon: "currency-usd" },
-  // ]);
-  // const renderScene = BottomNavigation.SceneMap({
-  //   perfil: PerfilScreen,
-  //   principal: HomeScreen,
-  //   ingresar: IngresarScreen,
-  //   vender: VenderScreen,
-  //   prueba: PruebaScreen,
-  // });
-  // return (
-  //   // <Tab.Navigator>
-  //   //   <Tab.Screen name="Home" component={HomeScreen} />
-  //   //   <Tab.Screen name="Profile" component={PruebaScreen} />
-  //   // </Tab.Navigator>
-  //   <BottomNavigation navigationState={{ index, routes }} onIndexChange={setIndex} renderScene={renderScene} />
-  // );
+
   const cargarToken = async () => {
     const token = await AsyncStorage.getItem("token");
     if (token) {
@@ -61,7 +59,11 @@ export const Tab = () => {
         {status == "no-autenticado" ? (
           <Stack.Screen name="Login" component={LoginScreen} />
         ) : (
-          <Stack.Screen name="Tabs" component={Tabs} options={{ headerShown: false }} />
+          <>
+            <Stack.Screen name="Tabs" component={Tabs} options={{ headerShown: true, title: "Gestor de inventarios" }} />
+            <Stack.Screen name="Camara" component={Camara} options={{ headerShown: false }} />
+            <Stack.Screen name="FormularioIngresar" component={FormularioIngresar} options={{ headerShown: false }} />
+          </>
         )}
       </Stack.Navigator>
     </NavigationContainer>

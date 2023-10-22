@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 
-const url = "http://192.168.2.111:3000";
+const url = "http://192.168.2.105:3000";
 
 export const api = axios.create({
   baseURL: url,
@@ -36,5 +36,6 @@ export const Api = () => {
   return {
     loading,
     get,
+    post,
   };
 };
