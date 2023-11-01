@@ -12,9 +12,11 @@ import { LoginScreen } from "./src/screens";
 import { SocketProvider } from "./src/context/SocketContext";
 import { Provider, useSelector } from "react-redux";
 import { store } from "./src/store";
+import { useEffect } from "react";
 const Stack = createStackNavigator();
 export default function App() {
   // const { status } = useSelector((state) => state.auth);
+
   return (
     <PaperProvider>
       <Provider store={store}>

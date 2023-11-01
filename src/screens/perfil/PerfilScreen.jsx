@@ -5,13 +5,14 @@ import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { checkAuthToken, cerrarSesion as logout } from "../../store/auth";
 import { ActivityIndicator, MD2Colors } from "react-native-paper";
-import { Api, api } from "../../api/api";
+import { useApi } from "../../api/api";
 
 export const PerfilScreen = () => {
+  const { api } = useApi();
   const { rut, nombre, apellido, correo, rol, direccion, telefono, imagen, id } = useSelector((state) => state.auth);
   const [img, setImg] = useState("");
   const dispatch = useDispatch();
-  const { get, loading } = Api();
+  // const { get, loading } = Api();
   const navigation = useNavigation();
   const [usuario, setUsuario] = useState({
     nombre: "Juan",
@@ -24,10 +25,15 @@ export const PerfilScreen = () => {
   const cerrarSesion = () => {
     dispatch(logout());
   };
+  const prueba = () => {
+    console.log(img);
+  };
 
   const buscarImg = async () => {
-    console.log(id);
-    const res = await get(`usuario/img/${id}`);
+    console.log({ id });
+    const res = await api.get(`usuario/img/${id}`);
+    console.log(res);
+    console.log({ res });
     const { data } = res;
     setImg(data.imagen);
     console.log(img);
@@ -76,6 +82,16 @@ export const PerfilScreen = () => {
           onPress={cerrarSesion}
         >
           Cerrar Sesión
+        </Button>
+        <Button
+          buttonColor="red"
+          mode="contained"
+          textColor="#fff"
+          style={styles.button.danger.estilos}
+          labelStyle={styles.button.danger.text}
+          onPress={prueba}
+        >
+          Prueba
         </Button>
       </View>
     </View>

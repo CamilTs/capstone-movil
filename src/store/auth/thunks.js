@@ -1,9 +1,10 @@
 import { useSelector } from "react-redux";
-import { api } from "../../api/api";
+import { useApi } from "../../api/api";
 import { revisando, login, logout } from "./authSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 // import { useJwt, decodeToken } from "react-jwt";
 import jwt_decode from "jwt-decode";
+
 export const revisandoAutentication = (rut, contrasena) => {
   return async (dispatch) => {
     dispatch(revisando());
@@ -12,15 +13,21 @@ export const revisandoAutentication = (rut, contrasena) => {
 
 export const autenticando = ({ rut, contrasena }) => {
   return async (dispatch) => {
+    const { api } = useApi();
     dispatch(revisando());
     try {
+      console.log("ESTE ES EL THUNK DE LOGIN r");
       const response = await api.post("autenticacion/login", { rut, contrasena });
+      console.log("======== Autenticando =========");
+      console.log(response);
       const { data } = response;
-
       if (!data.success) return dispatch(logout({ errorMessage: data.data }));
       await AsyncStorage.setItem("token", data.data.token);
       dispatch(login({ ...data.data }));
-    } catch (error) {}
+    } catch (error) {
+      console.log("ESTE ES UN ERROR");
+      console.log(error.message);
+    }
   };
 };
 
@@ -43,15 +50,17 @@ export const checkAuthToken = (token) => {
       dispatch(revisando());
       const decoded = jwt_decode(token);
       const { exp } = decoded;
+      console.log(decoded);
       const currentTime = Math.floor(Date.now() / 1000);
       if (exp <= currentTime) {
+        console.log("Vencio");
         await AsyncStorage.removeItem("token");
 
         return dispatch(logout({ errorMessage: null }));
       }
 
       if (!token) return dispatch(logout({ errorMessage: null }));
-
+      console.log("no vencio");
       dispatch(login({ ...decoded }));
     } catch (error) {
       dispatch(logout({ errorMessage: error.message }));
