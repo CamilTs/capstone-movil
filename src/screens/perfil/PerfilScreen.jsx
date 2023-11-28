@@ -8,20 +8,13 @@ import { ActivityIndicator, MD2Colors } from "react-native-paper";
 import { useApi } from "../../api/api";
 
 export const PerfilScreen = () => {
-  const { api } = useApi();
+  const { get } = useApi();
   const { rut, nombre, apellido, correo, rol, direccion, telefono, imagen, id } = useSelector((state) => state.auth);
   const [img, setImg] = useState("");
   const dispatch = useDispatch();
   // const { get, loading } = Api();
   const navigation = useNavigation();
-  const [usuario, setUsuario] = useState({
-    nombre: "Juan",
-    apellido: "Perez",
-    email: "juan@gmail.com",
-    telefono: "123456789",
-    direccion: "Av. Pedro de valdivia 400 42, Providencia",
-    fotoPerfil: "https://www.mundodeportivo.com/alfabeta/hero/2023/06/avatar-1.webp",
-  });
+
   const cerrarSesion = () => {
     dispatch(logout());
   };
@@ -30,13 +23,14 @@ export const PerfilScreen = () => {
   };
 
   const buscarImg = async () => {
-    console.log({ id });
-    const res = await api.get(`usuario/img/${id}`);
-    console.log(res);
-    console.log({ res });
+    if (!id) return;
+    const res = await get(`usuario/img/${id}`);
     const { data } = res;
+    if (!data.imagen) {
+      setImg("../../../assets/img/desconocido.jpeg");
+      return;
+    }
     setImg(data.imagen);
-    console.log(img);
   };
   useEffect(() => {
     buscarImg();
@@ -83,7 +77,7 @@ export const PerfilScreen = () => {
         >
           Cerrar Sesión
         </Button>
-        <Button
+        {/* <Button
           buttonColor="red"
           mode="contained"
           textColor="#fff"
@@ -92,7 +86,7 @@ export const PerfilScreen = () => {
           onPress={prueba}
         >
           Prueba
-        </Button>
+        </Button> */}
       </View>
     </View>
   );

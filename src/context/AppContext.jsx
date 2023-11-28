@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import { productos } from "../productos";
+import { useApi } from "../api/api";
 
 const AppContext = createContext();
 
@@ -8,56 +8,67 @@ export const useAppContext = () => {
 };
 
 export const AppProvider = ({ children }) => {
-  const [usuario, setUsuario] = useState(null);
-  const [lstAgregados, setLstAgregados] = useState([]);
-  const [lstVendidos, setLstVendidos] = useState([]);
+  const [productos, setProductos] = useState([]);
+  const { get } = useApi();
 
-  const validarProducto = (codigoBarra) => {
-    const encontrado = productos.find((producto) => producto.codigoBarra === codigoBarra);
-    console.log(encontrado);
-    return encontrado ? true : false;
+  const agregarProducto = async (codigoBarra) => {
+    try {
+      console.log({ codigoBarra });
+      const res = await get(`producto/buscar/codigoBarra/${codigoBarra}`);
+      console.log({ res });
+      if (!res.success) {
+        return;
+      }
+      const producto = res.data;
+      const encontrado = productos.findIndex((p) => p._id === producto._id);
+      if (encontrado !== -1) {
+        const copiaProductos = [...productos];
+        copiaProductos[encontrado].cantidad += 1;
+        setProductos(copiaProductos);
+        return;
+      } else {
+        producto.cantidad += 1;
+        setProductos([...productos, { ...producto, minimo: 0 }]);
+      }
+    } catch (error) {}
   };
 
-  const agregarAgregados = (codigoBarra) => {
-    // console.log(codigoBarra);
-    // const productoIndex = lstAgregados.findIndex((producto) => producto.codigoBarra === codigoBarra.codigoBarra);
-    // console.log({ mensaje: "PRoducto encontrado", productoIndex });
-    // setLstAgregados([...lstAgregados, codigoBarra]);
-    const producto = productos.find((producto) => producto.codigoBarra === codigoBarra);
-
-    // const productoEncontrado = productos.findInd((producto) => producto.codigoBarra === codigoBarra);
-    const productoIndex = lstAgregados.findIndex((producto) => producto.codigoBarra === codigoBarra.codigoBarra);
-
-    console.log(productoIndex);
-    if (productoIndex !== -1) {
-      setLstAgregados((prev) =>
-        prev.map((producto, index) => (index === productoIndex ? { ...producto, cantidad: producto.cantidad + 1 } : producto))
-      );
-    } else {
-      // Si el producto no se encuentra en lstAgregados, agrégalo con cantidad 1
-      setLstAgregados([...lstAgregados, { ...producto, cantidad: 1 }]);
+  const disminuirCantidad = (_id) => {
+    const encontrado = productos.findIndex((p) => p._id === _id);
+    if (encontrado !== -1) {
+      const copiaProductos = [...productos];
+      if (copiaProductos[encontrado].cantidad === 1) {
+        copiaProductos.splice(encontrado, 1);
+        setProductos(copiaProductos);
+        return;
+      } else {
+        copiaProductos[encontrado].cantidad -= 1;
+        setProductos(copiaProductos);
+        return;
+      }
     }
-    console.log(lstAgregados);
   };
 
-  const agregarVendidos = (codigoBarra) => {
-    const productoEncontrado = productos.find((producto) => producto.codigoBarra === codigoBarra);
-    setLstVendidos([...lstVendidos, codigoBarra]);
+  const aumentarCantidad = (_id) => {
+    const encontrado = productos.findIndex((p) => p._id === _id);
+    if (encontrado !== -1) {
+      const copiaProductos = [...productos];
+      copiaProductos[encontrado].cantidad += 1;
+      setProductos(copiaProductos);
+      return;
+    }
+  };
+
+  const limpiarProductos = () => {
+    setProductos([]);
   };
 
   const value = {
-    // USUARIO
-    usuario,
-
-    // AGREGADOS
-    lstAgregados,
-    agregarAgregados,
-    // VENDIDOS
-    lstVendidos,
-    agregarVendidos,
-
-    // FUNCIONES
-    validarProducto,
+    productos,
+    agregarProducto,
+    disminuirCantidad,
+    aumentarCantidad,
+    limpiarProductos,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

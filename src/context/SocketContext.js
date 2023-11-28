@@ -8,7 +8,7 @@ export const useSocketContext = () => {
 };
 
 export const SocketProvider = ({ children }) => {
-  const url = "http://192.168.2.104:81/socket.io/socket.io.js";
+  const url = "https://capstone-api-mhrj.onrender.com//socket.io/socket.io.js";
   const { socket, online } = useSocket(url);
 
   const value = { socket, online };

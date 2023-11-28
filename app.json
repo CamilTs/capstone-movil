@@ -31,6 +31,12 @@
         "projectId": "a41ae107-c930-4da5-a0ee-d3cfda66cd19"
       }
     },
-    "owner": "camilots"
+    "owner": "camilots",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/a41ae107-c930-4da5-a0ee-d3cfda66cd19"
+    }
   }
 }

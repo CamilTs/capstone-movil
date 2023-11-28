@@ -3,14 +3,13 @@ import { useNavigation } from "@react-navigation/native";
 import { Button, TextInput } from "react-native-paper";
 import { FormBuilder } from "react-native-paper-form-builder";
 import { useForm } from "react-hook-form";
-import { productos } from "../../../productos";
-import { Api } from "../../../api/api";
+import { useApi } from "../../../api/api";
 import { useSelector } from "react-redux";
 
 export const FormularioIngresar = ({ route }) => {
   const { comercio } = useSelector((state) => state.auth);
   const { codigoBarra } = route.params;
-  const { post } = Api();
+  const { post } = useApi();
   const navigator = useNavigation();
   const { control, setFocus, handleSubmit, getValues } = useForm({
     defaultValues: {
@@ -22,11 +21,17 @@ export const FormularioIngresar = ({ route }) => {
   });
 
   const ingresarProducto = async (producto) => {
-    // productos.push(producto);
-    const res = await post("producto", { ...producto, comercio });
-    console.log(res);
-    if (res.success) {
-      navigator.goBack();
+    try {
+      console.log(producto);
+      // productos.push(producto);
+      const res = await post("producto", { ...producto, comercio });
+      console.log({ res });
+      if (res.success) {
+        // navigator.goBack();
+        navigator.navigate("Camara", { tipo: "ingresar" });
+      }
+    } catch (error) {
+      console.log({ error });
     }
   };
   return (

@@ -2,14 +2,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-const url = "http://192.168.2.104:3000";
+const url = "https://capstone-api-mhrj.onrender.com";
 
-// const api = axios.create({
-//   baseURL: url,
-//   headers: {
-//     "Content-Type": "application/jsoasdasn",
-//   },
-// });
+export const api = axios.create({
+  baseURL: url,
+});
 // export const setAuthToken = async () => {
 //   try {
 //     const token = await AsyncStorage.getItem("token"); // Reemplaza 'token' con el nombre real de la clave de tu token en AsyncStorage
@@ -22,35 +19,40 @@ const url = "http://192.168.2.104:3000";
 // };
 
 export const useApi = () => {
-  let api = null;
-  let token = "";
-  const cargarToken = async () => {
-    token = await AsyncStorage.getItem("token");
-    console.log({ token });
-    const headers = {
-      "Content-Type": "application/json",
-    };
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
-    api = axios.create({
-      baseURL: url,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    // api.request({ headers: { "Authorization-2": `Bearer ${token}` } });
-    console.log("================== Se esta ejecutando api ==================");
-    console.log(api);
-    console.log("================== Se esta ejecutando api ==================");
+  const get = async (path = "") => {
+    const token = await AsyncStorage.getItem("token");
+    const res = await api.get(path, { headers: { Authorization: `Bearer ${token}` } });
+    const { data } = res;
+
+    return data;
+  };
+  const post = async (path = "", data = {}, options = {}) => {
+    const headers = { ...options };
+    const token = await AsyncStorage.getItem("token");
+    headers["Authorization"] = `Bearer ${token}`;
+    const res = await api.post(path, data, { headers: { ...headers } });
+    const { data: resData } = res;
+    return resData;
+  };
+  const put = async (path = "", data = {}, options = {}) => {
+    const headers = { ...options };
+    const token = await AsyncStorage.getItem("token");
+    headers["Authorization"] = `Bearer ${token}`;
+    const { data: resData } = await api.put(path, data, { headers: { ...headers } });
+    return resData;
+  };
+  const remove = async (path = "", options = {}) => {
+    const headers = { ...options };
+    const token = await AsyncStorage.getItem("token");
+    headers["Authorization"] = `Bearer ${token}`;
+    return await api.delete(path, headers);
   };
 
-  cargarToken();
-  useEffect(() => {
-    cargarToken();
-  }, [api]);
   return {
-    api,
+    get,
+    post,
+    put,
+    remove,
   };
 };
 

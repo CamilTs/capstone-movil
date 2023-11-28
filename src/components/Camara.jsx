@@ -5,45 +5,55 @@ import { BarCodeScanner } from "expo-barcode-scanner";
 import { useNavigation } from "@react-navigation/native";
 import { useAppContext } from "../context/AppContext";
 import { useSocketContext } from "../context/SocketContext";
-import { Api } from "../api/api";
+import { useApi } from "../api/api";
 import { useSelector } from "react-redux";
 
 export const Camara = ({ route }) => {
-  const { get } = Api();
+  const { get } = useApi();
+  const { agregarProducto } = useAppContext();
   const { comercio, id } = useSelector((state) => state.auth);
   const { tipo } = route.params;
   const { socket } = useSocketContext();
   const [codigoBarra, setCodigoBarra] = useState("");
   const [hasPermission, setHasPermission] = useState(null);
   const [visible, setVisible] = useState(false);
+  const [visibleAgregar, setVisibleAgregar] = useState(false);
   const [isVisibleIngresar, setIsVisibleIngresar] = useState(false);
   const [scanned, setScanned] = useState(false);
-  const { agregarVendidos, agregarAgregados, validarProducto } = useAppContext();
+  // const { agregarVendidos, agregarAgregados, validarProducto } = useAppContext();
   const navigation = useNavigation();
 
   const verificarProducto = async (codigoBarra) => {
     const res = await get(`producto/${codigoBarra}/${comercio}`);
-    console.log(res);
+    console.log({ res });
+    console.log(res.success);
+    return res.success;
   };
 
-  const manejarCodigoBarra = ({ type, data }) => {
+  const manejarCodigoBarra = async ({ type, data }) => {
     setCodigoBarra(data);
-    setScanned(true);
-    const isVerificado = verificarProducto(data);
+    setScanned(() => true);
+    const isVerificado = await verificarProducto(data);
     if (tipo === "vender") {
+      setVisible(true);
+
       // AQUI SE USA EL SOCKET PARA ENVIAR EL CODIGO DE BARRA
       socket.emit("venderProducto", { codigoBarra: data, comercio_id: comercio, usuario_id: id });
-      agregarVendidos(codigoBarra);
+      setCodigoBarra("");
+
+      // agregarVendidos(codigoBarra);
     } else {
+      console.log({ isVerificado });
       if (!isVerificado) {
         setIsVisibleIngresar(true);
         return;
       } else {
+        setVisibleAgregar(true);
+        agregarProducto(data);
         console.log("EN LA DB");
       }
-      agregarAgregados(data);
+      // agregarAgregados(data);
     }
-    setVisible(true);
   };
 
   const hideDialog = () => {
@@ -77,7 +87,15 @@ export const Camara = ({ route }) => {
   return (
     <View style={styles.container}>
       <BarCodeScanner onBarCodeScanned={scanned ? undefined : manejarCodigoBarra} style={StyleSheet.absoluteFillObject} />
-      {scanned && <Button title={"Presiona para escanear de nuevo"} onPress={() => setScanned(false)} />}
+      {scanned && (
+        <Button
+          title={"Presiona para escanear de nuevo"}
+          onPress={() => {
+            setScanned(false);
+            setCodigoBarra("");
+          }}
+        />
+      )}
 
       <Dialog visible={visible}>
         <Dialog.Title>Alerta</Dialog.Title>
@@ -101,6 +119,28 @@ export const Camara = ({ route }) => {
             <Button
               onPress={() => {
                 navigation.navigate("FormularioIngresar", { codigoBarra: codigoBarra });
+                setIsVisibleIngresar(false);
+                // setTimeout(() => {
+                setScanned(false);
+                // }, 1000);
+              }}
+            >
+              Si
+            </Button>
+          </Dialog.Actions>
+        </Dialog.Content>
+      </Dialog>
+      <Dialog visible={visibleAgregar}>
+        <Dialog.Title>Alerta</Dialog.Title>
+        <Dialog.Content>
+          <Text>¿Desea seguir agregando productos?</Text>
+
+          <Dialog.Actions>
+            <Button onPress={volver}>No</Button>
+            <Button
+              onPress={() => {
+                setVisibleAgregar(false);
+                setScanned(false);
               }}
             >
               Si
