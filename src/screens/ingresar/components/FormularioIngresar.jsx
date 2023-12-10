@@ -22,10 +22,8 @@ export const FormularioIngresar = ({ route }) => {
 
   const ingresarProducto = async (producto) => {
     try {
-      console.log(producto);
       // productos.push(producto);
       const res = await post("producto", { ...producto, comercio });
-      console.log({ res });
       if (res.success) {
         // navigator.goBack();
         navigator.navigate("Camara", { tipo: "ingresar" });

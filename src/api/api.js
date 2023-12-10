@@ -1,11 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { enviroment } from "../../enviroment";
 
-const url = "https://capstone-api-mhrj.onrender.com";
+const url = "https://capstone-ai-zi.onrender.com/";
 
 export const api = axios.create({
-  baseURL: url,
+  baseURL: enviroment.API_URL,
 });
 // export const setAuthToken = async () => {
 //   try {

@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 import { useSocket } from "../hooks/useSocket";
-
+import { enviroment } from "../../enviroment";
 export const SocketContext = createContext();
 
 export const useSocketContext = () => {
@@ -8,7 +8,7 @@ export const useSocketContext = () => {
 };
 
 export const SocketProvider = ({ children }) => {
-  const url = "https://capstone-api-mhrj.onrender.com//socket.io/socket.io.js";
+  const url = `${enviroment.API_URL_SOCKET}/socket.io/socket.io.js}`;
   const { socket, online } = useSocket(url);
 
   const value = { socket, online };

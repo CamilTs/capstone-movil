@@ -25,8 +25,6 @@ export const Camara = ({ route }) => {
 
   const verificarProducto = async (codigoBarra) => {
     const res = await get(`producto/${codigoBarra}/${comercio}`);
-    console.log({ res });
-    console.log(res.success);
     return res.success;
   };
 
@@ -43,14 +41,12 @@ export const Camara = ({ route }) => {
 
       // agregarVendidos(codigoBarra);
     } else {
-      console.log({ isVerificado });
       if (!isVerificado) {
         setIsVisibleIngresar(true);
         return;
       } else {
         setVisibleAgregar(true);
         agregarProducto(data);
-        console.log("EN LA DB");
       }
       // agregarAgregados(data);
     }

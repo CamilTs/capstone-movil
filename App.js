@@ -23,8 +23,8 @@ export default function App() {
         <NavigationContainer>
           <StatusBar style="dark" />
           <SafeAreaProvider>
-            <AppProvider>
-              <SocketProvider>
+            <SocketProvider>
+              <AppProvider>
                 <Tab />
                 {/* <Stack.Navigator initialRouteName="Login">
                   <Stack.Screen name="Principal" component={PrincipalScreen} options={{ headerShown: true }} />
@@ -32,8 +32,8 @@ export default function App() {
                   <Stack.Screen name="Camara" component={Camara} options={{ headerShown: true }} />
                   <Stack.Screen name="FormularioIngresar" component={FormularioIngresar} options={{ headerShown: true }} />
                 </Stack.Navigator> */}
-              </SocketProvider>
-            </AppProvider>
+              </AppProvider>
+            </SocketProvider>
           </SafeAreaProvider>
         </NavigationContainer>
       </Provider>

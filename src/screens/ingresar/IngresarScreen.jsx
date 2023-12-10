@@ -6,7 +6,7 @@ import { useAppContext } from "../../context/AppContext";
 import { useApi } from "../../api/api";
 
 export const IngresarScreen = () => {
-  const { productos, disminuirCantidad, aumentarCantidad, limpiarProductos } = useAppContext();
+  const { productos, disminuirCantidad, aumentarCantidad, limpiarProductos, notificacion } = useAppContext();
   const { put } = useApi();
   const navigator = useNavigation();
   const ingresarProducto = () => {
@@ -16,8 +16,6 @@ export const IngresarScreen = () => {
   const subirProductos = async () => {
     try {
       const response = await put("producto/actualizar/stock", { productos });
-      console.log("data");
-      console.log(response);
       if (response.success) {
         limpiarProductos();
         ToastAndroid.show("Productos ingresados", ToastAndroid.SHORT);
@@ -68,6 +66,9 @@ export const IngresarScreen = () => {
       </View>
       <Button mode="contained" onPress={subirProductos} disabled={productos.length == 0 ? true : false}>
         Ingresar
+      </Button>
+      <Button mode="contained" onPress={async () => await notificacion({ data: { nombre: "Camilo", cantidad: 4, succes: true } })}>
+        notificacion
       </Button>
       <AnimatedFAB icon={"plus"} style={[styles.fab.container, styles.fab.fabStyles]} onPress={ingresarProducto} />
     </View>
