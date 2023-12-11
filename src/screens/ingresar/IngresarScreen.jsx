@@ -67,9 +67,7 @@ export const IngresarScreen = () => {
       <Button mode="contained" onPress={subirProductos} disabled={productos.length == 0 ? true : false}>
         Ingresar
       </Button>
-      <Button mode="contained" onPress={async () => await notificacion({ data: { nombre: "Camilo", cantidad: 4, succes: true } })}>
-        notificacion
-      </Button>
+
       <AnimatedFAB icon={"plus"} style={[styles.fab.container, styles.fab.fabStyles]} onPress={ingresarProducto} />
     </View>
   );

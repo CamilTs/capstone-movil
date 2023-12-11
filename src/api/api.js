@@ -6,7 +6,7 @@ import { enviroment } from "../../enviroment";
 const url = "https://capstone-ai-zi.onrender.com/";
 
 export const api = axios.create({
-  baseURL: enviroment.API_URL,
+  baseURL: enviroment.API_URL + enviroment.PUERTO,
 });
 // export const setAuthToken = async () => {
 //   try {
@@ -23,7 +23,7 @@ export const useApi = () => {
   const get = async (path = "") => {
     const token = await AsyncStorage.getItem("token");
     const res = await api.get(path, { headers: { Authorization: `Bearer ${token}` } });
-    const { data } = res;
+    const { data, success } = res;
 
     return data;
   };

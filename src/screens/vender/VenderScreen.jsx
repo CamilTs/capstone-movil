@@ -2,6 +2,7 @@ import { AnimatedFAB, Button, IconButton, Text, Tooltip } from "react-native-pap
 import { useNavigation } from "@react-navigation/native";
 import { StyleSheet } from "react-native";
 import { View } from "react-native";
+import { useEffect } from "react";
 export const VenderScreen = () => {
   const navigation = useNavigation(); // Inicializa la navegación
 
@@ -9,11 +10,13 @@ export const VenderScreen = () => {
   const abrirCamara = () => {
     navigation.navigate("Camara", { tipo: "vender" }); // 'Camara' debe ser el nombre de la pantalla de la cámara en tu configuración de navegación
   };
-
+  useEffect(() => {
+    abrirCamara();
+  }, []);
   return (
     <View style={{ height: "100%" }}>
-      <Button onPress={abrirCamara}>Presionar para abrir la cámara</Button>
-      <AnimatedFAB icon={"plus"} style={[styles.fab.container, styles.fab.fabStyles]} />
+      {/* <Button onPress={abrirCamara}>Presionar para abrir la cámara</Button> */}
+      <AnimatedFAB icon={"plus"} style={[styles.fab.container, styles.fab.fabStyles]} onPress={abrirCamara} />
     </View>
   );
 };

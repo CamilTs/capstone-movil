@@ -8,7 +8,7 @@ export const useSocketContext = () => {
 };
 
 export const SocketProvider = ({ children }) => {
-  const url = `${enviroment.API_URL_SOCKET}/socket.io/socket.io.js}`;
+  const url = `${enviroment.API_URL}${enviroment.PUERTO_SOCKET}/socket.io/socket.io.js}`;
   const { socket, online } = useSocket(url);
 
   const value = { socket, online };

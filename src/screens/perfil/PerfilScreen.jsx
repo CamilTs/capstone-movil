@@ -9,6 +9,7 @@ import { useApi } from "../../api/api";
 
 export const PerfilScreen = () => {
   const { get } = useApi();
+  const [loading, setLoading] = useState(false);
   const { rut, nombre, apellido, correo, rol, direccion, telefono, imagen, id } = useSelector((state) => state.auth);
   const [img, setImg] = useState("");
   const dispatch = useDispatch();
@@ -23,14 +24,25 @@ export const PerfilScreen = () => {
   };
 
   const buscarImg = async () => {
+    setLoading(true);
     if (!id) return;
-    const res = await get(`usuario/img/${id}`);
-    const { data } = res;
-    if (!data.imagen) {
-      setImg("../../../assets/img/desconocido.jpeg");
+    console.log(rut);
+    const res = await get(`usuario/img/${rut}`);
+    const { data, success } = res;
+    console.log("Este es el success", success);
+    if (!success) {
+      setLoading(false);
+
       return;
+    } else {
+      if (!data.imagen) {
+        setImg("../../../assets/img/desconocido.jpeg");
+        return;
+      }
+      setImg(data.imagen);
+      setLoading(false);
     }
-    setImg(data.imagen);
+    setLoading(false);
   };
   useEffect(() => {
     buscarImg();
@@ -40,7 +52,13 @@ export const PerfilScreen = () => {
     <View style={styles.contenedor.contenedor}>
       <View style={styles.contenedor.informacion}>
         <View style={styles.contenedor.fotoPeril}>
-          {img ? <Avatar.Image size={200} source={{ uri: img }} /> : <ActivityIndicator animating={true} color={MD2Colors.red800} />}
+          {loading && <ActivityIndicator animating={true} color={MD2Colors.red500} />}
+          {img != "" ? (
+            <Avatar.Image size={200} source={{ uri: img }} />
+          ) : (
+            // <View style={{ width: "200px", height: "200px", backgroundColor: "yellow" }}></View>
+            <Avatar.Image size={200} source={{ uri: "../../../assets/img/desconocido.jpeg" }} />
+          )}
         </View>
         <View style={styles.contenedor.datos}>
           <View style={styles.contenedor.campo}>
